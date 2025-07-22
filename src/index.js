@@ -44,6 +44,12 @@ const network = net.createServer((socket) => {
 
       broadcast(Nodes, { event: "receiveTransaction", data: data.data });
 
+      if (Ainite.pendingTransaction.length > 10) {
+        const block = Ainite.minePendingTransaction(ME.host);
+
+        broadcast(Nodes, { event: "receiveBlock", data: { block: block } });
+      }
+
       socket.write("Transaction created and added to pending transaction");
     }
 
@@ -68,6 +74,8 @@ const network = net.createServer((socket) => {
     }
 
     if (data.event == "receiveBlock") {
+      Ainite.endMining();
+
       Ainite.chain.push(data.data.block);
 
       console.log("Block received and successfully added to chain.");

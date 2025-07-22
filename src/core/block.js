@@ -24,10 +24,15 @@ class Block {
       .digest("hex");
   }
 
-  mineBlock(difficulty) {
+  mineBlock(difficulty, mining) {
     while (
       this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")
     ) {
+      if (!mining()) {
+        //return
+
+        return false;
+      }
       this.nonce++;
 
       //this.hash = this.calculateHash();
