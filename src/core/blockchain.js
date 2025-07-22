@@ -6,7 +6,7 @@ class Blockchain {
   constructor() {
     this.chain = [this.createGenesisBlock()];
     this.pendingTransaction = [];
-    this.difficulty = 2;
+    this.difficulty = 3;
   }
 
   createGenesisBlock() {
@@ -23,7 +23,7 @@ class Blockchain {
 
   minePendingTransaction(miner) {
     const block = new Block(
-      this.getLatestBlock + 1,
+      this.getLatestBlock().index + 1,
       Date.now(),
       this.pendingTransaction,
       this.getLatestBlock().hash
@@ -31,15 +31,17 @@ class Blockchain {
 
     block.mineBlock(this.difficulty);
 
-    this.pendingTransaction = [
-      this.createTransaction(
-        "Mining reward",
-        "system",
-        miner,
-        1000,
-        "Mining reward"
-      ),
-    ];
+    this.pendingTransaction = [];
+
+    this.createTransaction(
+      "Mining reward",
+      "system",
+      miner,
+      1000,
+      "Mining reward"
+    );
+
+    this.chain.push(block);
   }
 
   createTransaction(type, from, to, amount, message) {

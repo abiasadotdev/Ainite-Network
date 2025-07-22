@@ -22,7 +22,9 @@ const network = net.createServer((socket) => {
           event: "registerNode",
           data: { address: address[0] + ":" + address[1] },
         });
+
         console.log(`New node registered.`);
+
         console.log(address);
       }
     }
@@ -40,9 +42,37 @@ const network = net.createServer((socket) => {
 
       Ainite.createTransaction(type, from, to, amount, message);
 
-      broadcast(Nodes, data.data);
+      broadcast(Nodes, { event: "receiveTransaction", data: data.data });
 
       socket.write("Transaction created and added to pending transaction");
+    }
+
+    if (data.event == "receiveTransaction") {
+      const { type, from, to, amount, message } = data.data.tx;
+
+      Ainite.createTransaction(type, from, to, amount, message);
+
+      console.log("Transaction received and added to pending transaction.");
+
+      if (Ainite.pendingTransaction.length > 10) {
+        const block = Ainite.minePendingTransaction(ME.host);
+
+        broadcast(Nodes, { event: "receiveBlock", data: { block: block } });
+      }
+
+      console.log("Mining");
+
+      console.log(Ainite.chain);
+
+      console.log(Ainite.pendingTransaction);
+    }
+
+    if (data.event == "receiveBlock") {
+      Ainite.chain.push(data.data.block);
+
+      console.log("Block received and successfully added to chain.");
+
+      console.log(data.data.block);
     }
   });
 });
