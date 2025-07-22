@@ -24,7 +24,7 @@ class Block {
       .digest("hex");
   }
 
-  mineBlock(difficulty, mining) {
+  async mineBlock(difficulty, mining) {
     while (
       this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")
     ) {
@@ -40,6 +40,8 @@ class Block {
       this.hash = this.createHash();
 
       console.log(`Block is being mined. Current nonce : ${this.nonce}`);
+
+      await new Promise((resolve) => setImmediate(resolve));
     }
 
     console.log(`Block successfully mined. ${this.hash}`);

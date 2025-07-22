@@ -44,7 +44,7 @@ const network = net.createServer((socket) => {
 
       broadcast(Nodes, { event: "receiveTransaction", data: data.data });
 
-      if (Ainite.pendingTransaction.length > 10) {
+      if (Ainite.pendingTransaction.length > 5) {
         const block = Ainite.minePendingTransaction(ME.host);
 
         broadcast(Nodes, { event: "receiveBlock", data: { block: block } });
@@ -60,7 +60,7 @@ const network = net.createServer((socket) => {
 
       console.log("Transaction received and added to pending transaction.");
 
-      if (Ainite.pendingTransaction.length > 10) {
+      if (Ainite.pendingTransaction.length > 5) {
         const block = Ainite.minePendingTransaction(ME.host);
 
         broadcast(Nodes, { event: "receiveBlock", data: { block: block } });
