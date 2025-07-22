@@ -1,5 +1,5 @@
 const ME = require("./config");
 
-const Nodes = [ME];
+const Nodes = [{ host: "192.168.100.5", port: 8000, genesis: true }];
 
 module.exports = Nodes;

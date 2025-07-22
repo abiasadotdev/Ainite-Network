@@ -36,7 +36,9 @@ if (!ME.genesis) {
   const client = net.createConnection(
     { host: Nodes[0].host, port: Nodes[0].port },
     () => {
-      console.log(`Connected to genesis node. Genesis : ${Nodes[0]}`);
+      console.log(`Connected to genesis node. Genesis :`);
+
+      console.log(Nodes[0]);
 
       client.write(
         JSON.stringify({
