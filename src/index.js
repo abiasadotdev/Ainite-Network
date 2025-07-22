@@ -4,17 +4,27 @@ const ME = require("./core/node/config");
 
 const Nodes = require("./core/node");
 
+const broadcast = require("./core/net/broadcast");
+
 const Ainite = require("./core/ainite");
 
 const network = net.createServer((socket) => {
+  console.log(`New node connected.`);
+
   socket.on("data", (buffer) => {
     const data = JSON.parse(buffer);
 
     if (data.event == "registerNode") {
+      console.log(data);
       const address = data.data.address.split(":");
 
       if (!Nodes.some((node) => node.host == address[0])) {
         Nodes.push({ host: address[0], port: address[1], genesis: false });
+
+        broadcast(Nodes, {
+          event: "registerNode",
+          data: { address: address[0] + ":" + address[1] },
+        });
 
         console.log(`New node registered.`);
 
