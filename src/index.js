@@ -9,13 +9,10 @@ const broadcast = require("./core/net/broadcast");
 const Ainite = require("./core/ainite");
 
 const network = net.createServer((socket) => {
-  console.log(`New node connected.`);
-
   socket.on("data", (buffer) => {
     const data = JSON.parse(buffer);
 
     if (data.event == "registerNode") {
-      console.log(data);
       const address = data.data.address.split(":");
 
       if (!Nodes.some((node) => node.host == address[0])) {
@@ -25,10 +22,8 @@ const network = net.createServer((socket) => {
           event: "registerNode",
           data: { address: address[0] + ":" + address[1] },
         });
-
         console.log(`New node registered.`);
-
-        console.log(Nodes);
+        console.log(address);
       }
     }
 
@@ -38,6 +33,16 @@ const network = net.createServer((socket) => {
 
     if (data.event == "pendingTransaction") {
       socket.write(JSON.stringify(Ainite.pendingTransaction));
+    }
+
+    if (data.event == "createTransaction") {
+      const { type, from, to, amount, message } = data.data;
+
+      Ainite.createTransaction(type, from, to, amount, message);
+
+      broadcast(Nodes, data.data);
+
+      socket.write("Transaction created and added to pending transaction");
     }
   });
 });

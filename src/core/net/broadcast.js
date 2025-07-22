@@ -1,11 +1,15 @@
 const net = require("net");
 
+const ME = require("../node/config");
+
 const broadcast = (nodes, data) => {
   nodes.forEach((node) => {
     const broad = net.createConnection(
       { host: node.host, port: node.port },
       () => {
-        broad.write(JSON.stringify(data));
+        if (node.host !== ME.host) {
+          broad.write(JSON.stringify(data));
+        }
       }
     );
   });
